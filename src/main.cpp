@@ -2,6 +2,7 @@
 #include <Lexer.hpp>
 #include <utils.hpp>
 #include <Token.hpp>
+#include <Parser.hpp>
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -11,13 +12,15 @@ int main(int argc, char* argv[]) {
   const char* filepath = argv[1];
 
   char* contents = get_file_contents(filepath);
-
   Lexer* lexer = new Lexer(contents);
-  Token* tok = lexer->get_next_token();
+  Parser* parser = new Parser(lexer);
 
-  while (tok && tok->type != TokenType::TOKEN_EOF) {
-    printf("%s\n", tok->value);
-    tok = lexer->get_next_token();
-  }
+  AST* root = parser->parse();
+
+  printf("%p\n", root);
+
+
   return 0;
 }
+
+// raise your hand if you're seeing an address

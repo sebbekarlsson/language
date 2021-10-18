@@ -2,7 +2,6 @@
 #define LANG_PARSER_H
 #include <Lexer.hpp>
 #include <AST.hpp>
-// raise your hand when your Parser.hpp looks like this
 class Parser {
   public:
     Parser(Lexer* lexer);
@@ -17,7 +16,7 @@ class Parser {
     AST* parse_string();
     AST* parse_number();
     AST* parse_id();
-    AST* parse_function_call();
+    AST* parse_function_call_args(AST* left);
     AST* parse_binop();
 
     Lexer* lexer;
