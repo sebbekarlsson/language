@@ -3,6 +3,7 @@
 #include <utils.hpp>
 #include <Token.hpp>
 #include <Parser.hpp>
+#include <Evaluator.hpp>
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -14,13 +15,12 @@ int main(int argc, char* argv[]) {
   char* contents = get_file_contents(filepath);
   Lexer* lexer = new Lexer(contents);
   Parser* parser = new Parser(lexer);
+  Evaluator* evaluator = new Evaluator();
 
   AST* root = parser->parse();
 
-  printf("%p\n", root);
-
+  evaluator->evaluate(root);
 
   return 0;
 }
 
-// raise your hand if you're seeing an address

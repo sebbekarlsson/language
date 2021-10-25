@@ -18,6 +18,7 @@ class Parser {
     AST* parse_id();
     AST* parse_function_call_args(AST* left);
     AST* parse_binop();
+    AST* parse_statement();
 
     Lexer* lexer;
     Token* token;

@@ -9,7 +9,8 @@ typedef enum {
   AST_FUNCTION_CALL,
   AST_BINOP,
   AST_COMPOUND,
-  AST_INT
+  AST_INT,
+  AST_NULL
 } ASTType;
 
 class AST {

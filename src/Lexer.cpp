@@ -80,13 +80,11 @@ Token* Lexer::get_next_token() {
 
     if (isalpha(this->c)) {
       Token* tok = this->parse_id();
-      this->advance();
       return tok;
     }
 
     if (isdigit(this->c)) {
       Token* tok = this->parse_number();
-      this->advance();
       return tok;
     }
 
@@ -96,14 +94,17 @@ Token* Lexer::get_next_token() {
     }
 
     switch (this->c) {
-      case '(': return this->token_current_char(TokenType::TOKEN_LPAREN);
-      case ')': return this->token_current_char(TokenType::TOKEN_RPAREN);
-      case '{': return this->token_current_char(TokenType::TOKEN_LBRACE);
-      case '}': return this->token_current_char(TokenType::TOKEN_RBRACE);
-      case ';': return this->token_current_char(TokenType::TOKEN_SEMI);
-      case '=': return this->token_current_char(TokenType::TOKEN_EQUALS);
+      case '(': return this->token_current_char(TokenType::TOKEN_LPAREN); break;
+      case ')': return this->token_current_char(TokenType::TOKEN_RPAREN); break;
+      case '{': return this->token_current_char(TokenType::TOKEN_LBRACE); break;
+      case '}': return this->token_current_char(TokenType::TOKEN_RBRACE); break;
+      case ';': return this->token_current_char(TokenType::TOKEN_SEMI); break;
+      case '=': return this->token_current_char(TokenType::TOKEN_EQUALS); break;
+      case '+': return this->token_current_char(TokenType::TOKEN_ADD); break;
+      case '-': return this->token_current_char(TokenType::TOKEN_SUB); break;
+      case '/': return this->token_current_char(TokenType::TOKEN_DIV); break;
+      case '*': return this->token_current_char(TokenType::TOKEN_MUL); break;
     }
-
     if (this->c != 0) {
       printf("Unexpected token %c\n", this->c);
       break;

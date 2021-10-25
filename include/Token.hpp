@@ -10,7 +10,11 @@ typedef enum {
   TOKEN_SEMI,
   TOKEN_INT,
   TOKEN_EOF,
-  TOKEN_EQUALS
+  TOKEN_EQUALS,
+  TOKEN_ADD,
+  TOKEN_SUB,
+  TOKEN_DIV,
+  TOKEN_MUL
 } TokenType;
 
 typedef struct {
