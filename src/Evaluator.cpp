@@ -8,11 +8,10 @@ AST* builtin_function_print(std::vector<AST*> args) {
 
   for (std::vector<AST*>::iterator it = args.begin(); it != args.end(); it++) {
     AST* argument = (*it);
-    if (argument->value_str == 0) continue;
 
     if (argument->type == ASTType::AST_INT) {
       printf("%d\n", argument->value_int);
-    } else {
+    } else if (argument->value_str != 0) {
       printf("%s\n", argument->value_str);
     }
   }
@@ -40,6 +39,13 @@ AST* Evaluator::evaluate_var_def(AST* ast) {
 
   return value;
 }
+
+AST* Evaluator::evaluate_function(AST* ast) {
+  std::string name(ast->name);
+  this->memory[name] = ast;
+  return ast;
+}
+
 AST* Evaluator::evaluate_string(AST* ast) {
   return ast;
 }
@@ -61,6 +67,14 @@ AST* Evaluator::evaluate_id(AST* ast) {
 AST* Evaluator::evaluate_function_call(AST* ast) {
   char* name = ast->name;
 
+  if (this->memory.find(name) != this->memory.end()) {
+    AST* astfunc = this->memory[name];
+
+    if (astfunc->body != 0) {
+      return this->evaluate(astfunc->body);
+    }
+  }
+
 
   if (this->builtin_functions.find(name) == this->builtin_functions.end()) {
     printf("Undefined function %s\n", name);
@@ -80,52 +94,25 @@ AST* Evaluator::evaluate_function_call(AST* ast) {
   return func(evaluated_args);
 }
 
-AST* ast_addition(AST* left, AST* right) {
-  int x = left->value_int;
-  int y = right->value_int;
-
-  AST* result = new AST(ASTType::AST_INT);
-  result->value_int = x + y;
-  return result;
-}
-
-AST* ast_subtraction(AST* left, AST* right) {
-  int x = left->value_int;
-  int y = right->value_int;
-
-  AST* result = new AST(ASTType::AST_INT);
-  result->value_int = x - y;
-  return result;
-}
-
-AST* ast_division(AST* left, AST* right) {
-  int x = left->value_int;
-  int y = right->value_int;
-
-  AST* result = new AST(ASTType::AST_INT);
-  result->value_int = x / y;
-  return result;
-}
-
-AST* ast_multiplication(AST* left, AST* right) {
-    int x = left->value_int;
-  int y = right->value_int;
-
-  AST* result = new AST(ASTType::AST_INT);
-  result->value_int = x * y;
-  return result;
-}
+#define MATH_OP(name, op, left, right)          \
+  {                                             \
+  int x = left->value_int;                      \
+  int y = right->value_int;                     \
+                                                \
+  AST* name = new AST(ASTType::AST_INT);        \
+  name->value_int = x op y;                     \
+  return name;                                  \
+  }
 
 AST* Evaluator::evaluate_binop(AST* ast) {
-  // raise your hand when you have these
   ast->left = this->evaluate(ast->left);
   ast->right = this->evaluate(ast->right);
 
   switch (ast->op->type) {
-    case TokenType::TOKEN_ADD: return ast_addition(ast->left, ast->right); break;
-    case TokenType::TOKEN_SUB: return ast_subtraction(ast->left, ast->right); break;
-    case TokenType::TOKEN_DIV: return ast_division(ast->left, ast->right); break;
-    case TokenType::TOKEN_MUL: return ast_multiplication(ast->left, ast->right); break;
+    case TokenType::TOKEN_ADD: MATH_OP(result, +, ast->left, ast->right); break;
+    case TokenType::TOKEN_SUB: MATH_OP(result, -, ast->left, ast->right); break;
+    case TokenType::TOKEN_DIV: MATH_OP(result, /, ast->left, ast->right); break;
+    case TokenType::TOKEN_MUL: MATH_OP(result, *, ast->left, ast->right); break;
     default: {
       printf("Evaluator: Dont know what to do with %s\n", ast->op->value);
       exit(1);
@@ -143,6 +130,7 @@ AST* Evaluator::evaluate(AST* ast) {
     case ASTType::AST_ID: return this->evaluate_id(ast); break;
     case ASTType::AST_VAR_DEF: return this->evaluate_var_def(ast); break;
     case ASTType::AST_FUNCTION_CALL: return this->evaluate_function_call(ast); break;
+    case ASTType::AST_FUNCTION: return this->evaluate_function(ast); break;
     case ASTType::AST_BINOP: return this->evaluate_binop(ast); break;
     default: { return ast; }
   }

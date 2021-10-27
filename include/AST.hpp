@@ -7,6 +7,7 @@ typedef enum {
   AST_STRING,
   AST_VAR_DEF,
   AST_FUNCTION_CALL,
+  AST_FUNCTION,
   AST_BINOP,
   AST_COMPOUND,
   AST_INT,
@@ -19,6 +20,7 @@ class AST {
 
     AST* left;
     AST* right;
+    AST* body;
     Token* op;
     std::vector<AST*> children;
     std::vector<AST*> args;

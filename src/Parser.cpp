@@ -47,12 +47,54 @@ AST* Parser::parse_compound() {
   return ast;
 }
 
+AST* Parser::parse_function() {
+  AST* ast = new AST(AST_FUNCTION);
+  this->eat(TokenType::TOKEN_ID); // function
+  ast->name = copy_str(this->token->value);
+  this->eat(TokenType::TOKEN_ID); // function name
+
+  this->eat(TokenType::TOKEN_LPAREN); // (
+
+  if (this->token->type != TokenType::TOKEN_RPAREN) { // arguments
+    ast->args.push_back(this->parse_expr());
+
+    while (this->token->type == TokenType::TOKEN_COMMA) {
+      this->eat(TokenType::TOKEN_COMMA);
+      ast->args.push_back(this->parse_expr());
+    }
+  }
+
+  this->eat(TokenType::TOKEN_RPAREN); // )
+
+  this->eat(TokenType::TOKEN_LBRACE); // {
+  if (this->token->type != TOKEN_RBRACE) {
+    ast->body = this->parse_function_body();
+  }
+  this->eat(TokenType::TOKEN_RBRACE); // }
+
+  return ast;
+}
+
+AST* Parser::parse_function_body() {
+  AST* ast = new AST(AST_COMPOUND);
+
+  ast->children.push_back(this->parse_statement());
+
+  while (this->token->type != TokenType::TOKEN_EOF && this->token->type != TokenType::TOKEN_RBRACE) {
+    ast->children.push_back(this->parse_statement());
+  }
+
+  return ast;
+}
+
 AST* Parser::parse_factor() {
 
   AST* left = 0;
   if (this->token->type == TokenType::TOKEN_ID) {
     if (strcmp(token->value, "var") == 0) {
       return this->parse_var_def();
+    } else if (strcmp(token->value, "function") == 0) {
+      return this->parse_function();
     }
   }
 

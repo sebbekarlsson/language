@@ -18,6 +18,7 @@ class Evaluator {
     AST* evaluate_number(AST* ast);
     AST* evaluate_id(AST* ast);
     AST* evaluate_function_call(AST* ast);
+    AST* evaluate_function(AST* ast);
     AST* evaluate_binop(AST* ast);
 
     AST* evaluate(AST* ast);

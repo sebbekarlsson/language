@@ -104,6 +104,7 @@ Token* Lexer::get_next_token() {
       case '-': return this->token_current_char(TokenType::TOKEN_SUB); break;
       case '/': return this->token_current_char(TokenType::TOKEN_DIV); break;
       case '*': return this->token_current_char(TokenType::TOKEN_MUL); break;
+      case ',': return this->token_current_char(TokenType::TOKEN_COMMA); break;
     }
     if (this->c != 0) {
       printf("Unexpected token %c\n", this->c);
